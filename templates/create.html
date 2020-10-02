@@ -1,3 +1,5 @@
+<!--
+
 New Broken Laptop
 <form method="POST" action="/create">
 <input name="brand" type="text">
@@ -17,3 +19,56 @@ New Broken Laptop
 	</tr>
 {% endfor %}
 </table>
+
+--!>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>{{ title }}</title>
+  </head>
+  <body>
+
+<h1>{{ title }}</h1>
+  
+  
+  <table class="table table-bordered table-dark">
+  
+    <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Model</th>
+      <th scope="col">Price</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    {% for brokenlaptop in brokenlaptop %}
+	<tr>
+		<td>{{ brokenlaptop.id }}</td>
+		<td>{{ brokenlaptop.brand }}</td>
+		<td>{{ brokenlaptop.price }}</td>
+	</tr>
+	{% endfor %}
+	<tbody>
+	
+  </table>
+  
+  <form method="post">
+  <div class="form-group">
+    <label>Brand</label>
+    <input type="text" name="brand" class="form-control" placeholder="Dell">
+  </div>
+  <div class="form-group">
+    <label>Price</label>
+    <input type="number" name="price" class="form-control" placeholder="120.00">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

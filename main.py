@@ -1,7 +1,10 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask import render_template
 from flask import request
 from flask import redirect
+
+
+import os
 
 # install using,  pip3 install sqlalchemy flask-sqlalchemy 
 from flask_sqlalchemy import SQLAlchemy
@@ -10,8 +13,17 @@ from flask_sqlalchemy import SQLAlchemy
 # brokenlaptops.db is the name of database and it will be created inside 
 # project directory. You can choose any other direcoty to keep it, 
 # in that case the string will look different. 
-database = "sqlite:///brokenlaptops.db"
 
+# database = "sqlite:///brokenlaptops.db"
+
+database = (
+    #mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_connection_name>
+    'mysql+pymysql://{name}:{password}@/{dbname}?unix_socket=/cloudsql/{connection}').format (
+        name       = os.environ['DB_USER'], 
+        password   = os.environ['DB_PASS'],
+        dbname     = os.environ['DB_NAME'],
+        connection = os.environ['DB_CONNECTION_NAME']
+        )
 
 app = Flask(__name__)
 
@@ -29,10 +41,20 @@ db = SQLAlchemy(app)
 # if you do not do this step, the database file will not be created and you will receive an error message saying "table does not exist".
 ###################################################
 
+@app.route('/test')
+def test():
+    return 'App is running'
+
+@app.route('/init_db')
+def init_db():
+    db.drop_all()
+    db.create_all() 
+    return 'DB initialized'
+
 @app.route('/')
 def index():
     brokenlaptop = BrokenLaptop.query.all()
-    return render_template("index.html",brokenlaptop=brokenlaptop)
+    return render_template("index.html",brokenlaptop=brokenlaptop, title="All Broken Laptops")
     
 
 @app.route('/create', methods=['GET','POST'])
@@ -46,7 +68,7 @@ def create():
         db.session.commit()
         
     brokenlaptop = BrokenLaptop.query.all()
-    return render_template("create.html", brokenlaptop = brokenlaptop)
+    return render_template("create.html", brokenlaptop = brokenlaptop, title="Create a Laptop")
 
     # now add two lines to retrieve all the BrokenLaptops from the database and display 
     # as it is done in '/' index route 
@@ -61,7 +83,7 @@ def delete(laptop_id):
     db.session.commit()
     
     brokenlaptop = BrokenLaptop.query.all()
-    return render_template("delete.html", brokenlaptop = brokenlaptop)
+    return redirect(url_for('index'))
     # now add two lines to retrieve all the BrokenLaptops from the database and display 
     # as it is done in '/' index route 
     
